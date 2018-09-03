@@ -19,7 +19,7 @@ const handler = {
         if (this.event.session.new) {
             this.resetAll;
         }
-        this.emit(':ask', '<s>Hi!</s><s> Welcome to Trafalgar</s><s>What can I do for you</s>');
+        this.emit(':ask', '<s>Hi!</s><s> Welcome to Fleetcor</s><s>What can I do for you</s>');
     },
     'AMAZON.HelpIntent': function () {
         this.response.speak('<s>What can I do for you</s>').listen('<s>What can I do for you</s>');
@@ -33,31 +33,30 @@ const handler = {
         this.response.speak('<s>Stopped</s>').shouldEndSession(true);
         this.emit(':responseReady');
     },
-    "TourPackageIntent": function () {
-        TourPackageIntentInvoked = true;
-        var speechOutput = '<s>Sure,<break strength=\"medium\" /> May I know where are you travelling to?</s>';        
+    'AMAZON.NavigateHomeIntent': function () {
+        this.emit(':ask', '<s>Hi!</s><s> Welcome to Fleetcor</s><s>What can I do for you</s>');
+    },
+    "blockCardIntent": function () {
+        //TourPackageIntentInvoked = true;
+        var speechOutput = '<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>';        
         this.response.speak(speechOutput).shouldEndSession(false);
         this.emit(':responseReady');
     },
-    "DestinationIntent": function () {
+    "creditLimitIntent": function () {
         var speechOutput;
-        destination = this.event.request.intent.slots.destination.value;
-        var speechOutput = '<s>Which is your month of travel?</s>';
+        //destination = this.event.request.intent.slots.destination.value;
+        var speechOutput = '<s>You have a credit limit of $250 in your card </s>';
         console.log("destination is"+destination+"  Speech output: " + speechOutput);
         this.response.speak(speechOutput).shouldEndSession(false);
         this.emit(':responseReady');
     },
-    "TravelMonthIntent": function () {
-        var speechOutput;
-        travelMonth = this.event.request.intent.slots.travelMonth.value;
-        var speechOutput = '<s>Please share length of trip</s>';
-        speechOutput += '<s><break strength=\"medium\" /> 1 to 7 days</s>';
-        speechOutput += '<s><break strength=\"medium\" /> 8 to 14 days</s>';
-        speechOutput += '<s><break strength=\"medium\" /> more than 14 days</s>';
+    "accountBalanceIntent": function () {
+        //travelMonth = this.event.request.intent.slots.travelMonth.value;
+        var speechOutput = '<s>You have $100 balance in your account</s>';
         console.log("travelMonth is"+travelMonth+"  Speech output: " + speechOutput);
         this.response.speak(speechOutput).shouldEndSession(false);
         this.emit(':responseReady');
-    },
+    }/*,
     "TripLengthIntent": function () {
         var speechOutput;
         tripLength = this.event.request.intent.slots.tripLength.value;
@@ -108,7 +107,7 @@ const handler = {
         var travelMonth = '';
         var tripLength = '';
         var priceRange = '';
-    }
+    }*/
 };
 
 exports.handler = function (event, context, callback) {
