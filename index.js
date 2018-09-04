@@ -9,10 +9,6 @@ const app = express();
 app.use(bodyParser.json());
 CA = new Alexa.app('fleetcor assistant');
 
-var claimStatusIntentCalled = false;
-var InsuranceDetailsIntentCalled = false;
-var ClaimNumberPresent = false;
-var claimId = "";
 var resp_msg = "";
 
 app.get('/',(req,res)=>{
@@ -28,13 +24,8 @@ app.post('/assistant',(req,res)=>{
               case "LaunchRequest":
                 // Launch Request
                 console.log(`LAUNCH REQUEST`)
-                /*context.succeed(
-                  generateResponse(
-                    buildSpeechletResponse("Greeting from your Insurance Manager", false),
-                    {}
-                  )
-                )*/
-                var responseText = 'Hi..welcome to fleetcor assistant ';
+                
+                var responseText = '<s>Hi</s><s>welcome to fleetcor assistant<break strength="medium" /></s><s>What can I do for you <break strength="medium" /></s> ';
                 var responseJson = {
                   "response": {
                       "outputSpeech": {
@@ -42,9 +33,10 @@ app.post('/assistant',(req,res)=>{
                         "text": responseText,
                         "ssml": "<speak>"+responseText+"</speak>"
                       }
-                    }
+                    },
+                    "shouldEndSession": false
                   };
-                res.json(responseJson).end(); 
+                res.json(responseJson); 
                 break;
         
               case "IntentRequest":
@@ -53,44 +45,11 @@ app.post('/assistant',(req,res)=>{
         
                 switch(req.body.request.intent.name) {
         
-                    case "claimStatusIntent":
-                      console.log("claimStatusIntent  called");
-                      claimStatusIntentCalled = true;
-                      claimId = "";
+                    case "blockCardIntent":
+                      console.log("blockCardIntent  called");
                       resp_msg = "";
-        
-                      if(req.body.request.intent.slots.claimId.value){
-                        ClaimNumberPresent = true;
-                        console.log("Claim number in Insurance status : " + req.body.request.intent.slots.claimId.value);
-                        claimId = req.body.request.intent.slots.claimId.value;
-                      }
-        
-                      if(ClaimNumberPresent == false){
-                        voice = "Please provide the claim number";
-                        text = "Please provide the claim number";
-                        //output(voice, text, false, context);
-                        var responseJson = { 
-                          "response": {
-                              "outputSpeech": {
-                                "type": "PlainText",
-                                "text": text,
-                                "ssml": "<speak>"+text+"</speak>"
-                              },
-                              "reprompt": {
-                                "outputSpeech": {
-                                  "type": 'PlainText',
-                                  "text": text
-                                }
-                                  }
-                          },                                                   
-                          "shouldEndSession": false
-                      }
-                      res.json(responseJson);
-                        break;
-                      }
-        
-                      if(claimStatusIntentCalled && ClaimNumberPresent){
-                          var responseText = "The claim status of the claim Id,,"+claimId +",, is active";
+                        var responseText = "<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>";
+                        responseText = responseText + "<s>Anything else i can do for you?</s>";
                         var responseJson = {
                             "response": {
                                 "outputSpeech": {
@@ -98,114 +57,44 @@ app.post('/assistant',(req,res)=>{
                                   "text": responseText,
                                   "ssml": "<speak>"+responseText+"</speak>"
                                 }
-                            }
+                            },
+                            "shouldEndSession": false
                         }
                         res.json(responseJson).end();
-                      }
         
                       break;
         
-                    case "InsuranceDetailsIntent":
-                      console.log("Insurnace Details Intent called");
-                      InsuranceDetailsIntentCalled = true;
-                      claimId = "";
-                      resp_msg = "";
-        
-                      if(event.request.intent.slots.claimId.value){
-                        ClaimNumberPresent = true;
-                        console.log("Claim number in Insurance details : " + event.request.intent.slots.claimId.value);
-                        claimId = event.request.intent.slots.claimId.value;
-                      }
-        
-                      if(ClaimNumberPresent == false){
-                        voice = "Please provide the claim number";
-                        text = "Please provide the claim number";
-                        //output(voice, text, false, context);
+                    case "creditLimitIntent":
+                    var responseText = "<s>You have a credit limit of <break strength=\"medium\" /> $250 in your card </s>";
+                    responseText = responseText + "<s>Anything else i can do for you?</s>";
                         var responseJson = {
                           "response": {
                               "outputSpeech": {
                                 "type": "PlainText",
-                                "text": text,
-                                "ssml": "<speak>"+text+"</speak>"
+                                "text": responseText,
+                                "ssml": "<speak>"+responseText+"</speak>"
                               }
-                          }
+                          },
+                          "shouldEndSession": false
                       }
                       res.json(responseJson).end();
                         break;
-                      }
         
-                      if(InsuranceDetailsIntentCalled && ClaimNumberPresent){
-                        /*getRequest(function(message){
-                          console.log("InsuranceDetailsIntent Response : " + message);
-                          output(message, message, true, context);
-                        });*/
-
+                    case "accountBalanceIntent":
+                    var responseText = "<s>You have <break strength=\"medium\" /> $100 balance in your account</s>";
+                    responseText = responseText + "<s>Anything else i can do for you?</s>";
                         var responseJson = {
                           "response": {
                               "outputSpeech": {
                                 "type": "PlainText",
-                                "text": text,
-                                "ssml": "<speak>"+text+"</speak>"
+                                "text": responseText,
+                                "ssml": "<speak>"+responseText+"</speak>"
                               }
-                          }
-                      }
-                      res.json(responseJson).end();
-                      }
-        
-                      break;
-        
-                    case "claimIdIntent":
-                      claimId = "";
-                      resp_msg = "";
-                      if(req.body.request.intent.slots.claimId.value){
-                        ClaimNumberPresent = true;
-                        console.log("Claim number in Insurance details : " + req.body.request.intent.slots.claimId.value);
-                        claimId = req.body.request.intent.slots.claimId.value;
-                      }
-        
-                      if(ClaimNumberPresent == false){
-                        voice = "Please provide the valid claim number";
-                        text = "Please provide the valid claim number";
-                        //output(voice, text, false, context);
-                        var responseJson = {
-                          "response": {
-                              "outputSpeech": {
-                                "type": "PlainText",
-                                "text": text,
-                                "ssml": "<speak>"+text+"</speak>"
-                              }
-                          }
+                          },
+                          "shouldEndSession": false
                       }
                       res.json(responseJson).end();
                         break;
-                      }
-        
-                      if(claimStatusIntentCalled == true || InsuranceDetailsIntentCalled == true ){
-                        /*getRequest(function(message){
-                          console.log("Response : " + message);
-                          output(message, message, true, context);
-                        });*/
-                        var responseText = "The claim status of the claim Id,,"+claimId +",, is active";
-                        var responseJson = {
-                            "response": {
-                                "outputSpeech": {
-                                  "type": "SSML",
-                                  //"text": responseText,
-                                  "ssml": "<speak>The claim status of the claim i d,<say-as interpret-as='digits'>"+claimId+"</say-as>,, is active</speak>"
-                                }
-                            }
-                        }
-                        res.json(responseJson).end();
-                      }
-                      else{
-                        context.succeed(
-                          generateResponse(
-                              buildSpeechletResponse("Sorry,,, but i did not got your query...!!",true),{}
-                          )
-                        )
-                      }
-        
-                      break;
         
                     case "ThanksIntent":
                       context.succeed(
