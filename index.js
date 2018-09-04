@@ -58,11 +58,17 @@ app.post('/assistant',(req,res)=>{
                         var responseText = "Sure, Your card has been blocked successfully.Contact our help center to unblock it";
                         responseText = responseText + "Anything else i can do for you?";
                         var responseJson = {
+                          "response": {
+                            "outputSpeech": {
+                              "type": "PlainText",
+                              "text": responseText,
+                              "ssml": "<speak>"+responseText+"</speak>"
+                            }
+                        },
                             "reprompt": {
                                 "outputSpeech": {
                                   "type": "PlainText",
-                                  "text": responseText,
-                                  "ssml": "<speak>"+responseText+"</speak>"
+                                  "text": responseText
                                 }
                             },
                             "shouldEndSession": false
