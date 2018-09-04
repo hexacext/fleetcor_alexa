@@ -7,7 +7,7 @@ helper = require('./helper')
 
 const app = express();
 app.use(bodyParser.json());
-CA = new Alexa.app('claimassistant');
+CA = new Alexa.app('fleetcor assistant');
 
 var claimStatusIntentCalled = false;
 var InsuranceDetailsIntentCalled = false;
@@ -16,12 +16,12 @@ var claimId = "";
 var resp_msg = "";
 
 app.get('/',(req,res)=>{
-  var test = formatClaimId(31241242);
-  console.log(test);
+  //var test = formatClaimId(31241242);
+  //console.log(test);
     res.send('App running');
 });
 
-app.post('/claim',(req,res)=>{
+app.post('/assistant',(req,res)=>{
     console.log('Req:',req.body.request);
     switch (req.body.request.type) {
         
@@ -34,7 +34,7 @@ app.post('/claim',(req,res)=>{
                     {}
                   )
                 )*/
-                var responseText = 'Hi..welcome to claim assistant';
+                var responseText = 'Hi..welcome to fleetcor assistant ';
                 var responseJson = {
                   "response": {
                       "outputSpeech": {
