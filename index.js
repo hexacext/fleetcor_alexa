@@ -25,11 +25,18 @@ app.post('/assistant',(req,res)=>{
                 // Launch Request
                 console.log(`LAUNCH REQUEST`)
                 
-                var responseText = '<s>Hi</s><s>welcome to fleetcor assistant<break strength="medium" /></s><s>What can I do for you <break strength="medium" /></s> ';
+                var responseText = "Hi welcome to fleetcor assistant"+ 
+                "What can I do for you ";
                 var responseJson = {
                   "response": {
                       "outputSpeech": {
                         "type": "PlainText",
+                        "ssml": "<speak>"+responseText+"</speak>"
+                      }
+                    },
+                    "reprompt": { 
+                      "outputSpeech": {
+                        "type": "PlainText",                        
                         "ssml": "<speak>"+responseText+"</speak>"
                       }
                     },
