@@ -12,6 +12,11 @@ alexaApp.express({
     checkCert: false
 });
 
+var blockCardIntentCalled = false;
+var creditLimitIntentCalled = false;
+var accountBalanceIntentCalled = false;
+var cardNumber = "";
+
 alexaApp.error = function (e, req, res) {
 	console.log("Error in Alexa");
     console.log(e);
@@ -73,13 +78,16 @@ alexaApp.launch(function (request, response) {
 });
 
 alexaApp.intent('blockCardIntent', function (request, response) {
+    blockCardIntentCalled = true;
     var say=[];
-     say = ["<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
+    say = ["<s>Sure,<break strength=\"medium\" /> please provide the last 4 digits of the card you wish to block</s>"];    
+    //say = ["<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
     response.shouldEndSession(false);
     response.say(say.join('\n'));
 });
 
 alexaApp.intent('creditLimitIntent', function (request, response) {
+    //creditLimitIntentCalled = true;
     var say=[];
      say = ["<s>You have a credit limit of <break strength=\"medium\" /> $250 in your card </s>"];
     response.shouldEndSession(false);
@@ -87,52 +95,59 @@ alexaApp.intent('creditLimitIntent', function (request, response) {
 });
 
 alexaApp.intent('accountBalanceIntent', function (request, response) {
-   var say=[];
+   // accountBalanceIntentCalled = true;
+       var say=[];
      say = ["<s>You have a balance of <break strength=\"medium\" /> $100  in your account</s>"];
     response.shouldEndSession(false);
     response.say(say.join('\n'));
 });
-/*
-alexaApp.intent('claimIdIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');
+
+alexaApp.intent('confirmBlockIntent', function (request, response) {
+    // accountBalanceIntentCalled = true;
+        var say=[];
+        say = ["<s>Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
+     response.shouldEndSession(false);
+     response.say(say.join('\n'));
+ });
+alexaApp.intent('cardNumberIntent', function (request, response) {
+    
     var say =['default response'];
-    console.log(request.data.request.intent.slots.claimId.value)
-    claimId=request.data.request.intent.slots.claimId.value;
-    console.log("claim id type"+typeof claimId.length);
-    if(claimId.length==11){
+    console.log(request.data.request.intent.slots.cardNumber.value)
+    cardNumber=request.data.request.intent.slots.cardNumber.value;
+    //if(claimId.length==11){
         console.log('length 11');
-        claimId = (claimId.replace(/(\d{3})(\d{2})(\d{6})/, "$1-$2-$3"));
-        console.log('After change::',claimId);
-        if(claimStatusIntentCalled){
-            console.log('Inside claimStatusIntentCalled');
-            return helper.getClaimStatus(claimId).then((result)=>{
-                say = result;
+        /*claimId = (claimId.replace(/(\d{3})(\d{2})(\d{6})/, "$1-$2-$3"));
+        console.log('After change::',claimId);*/
+        if(blockCardIntentCalled){
+            console.log('Inside blockCardIntentCalled');
+            //return helper.getClaimStatus(claimId).then((result)=>{
+                say = ["<s> Are you sure that you want to block the card ending with"+cardNumber+"</s>"];
                 console.log('after call',say);
                 response.shouldEndSession(false);
                 response.say(say.join('\n'));
 
-            }).catch((err)=>{
-                say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
-                response.shouldEndSession(true);
-                response.say(say.join('\n'));				
-            })
+            // }).catch((err)=>{
+            //     say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
+            //     response.shouldEndSession(true);
+            //     response.say(say.join('\n'));				
+            // })
         }
-        else if(repairPaymentIntentCalled){
+        else if(creditLimitIntentCalled){
             console.log("inside api call");
-            return helper.getClaimPaymentDetails(claimId).then((result)=>{            
-                say = ["<s> The payment status is "+result.paymentStatus+"</s>"];
+           // return helper.getClaimPaymentDetails(claimId).then((result)=>{            
+                say = ["<s>You have a credit limit of <break strength=\"medium\" /> $250 in your card </s>"];
                 claimPaymentDetails = result;
                 console.log('after call',say);
                 response.shouldEndSession(false);
                 response.say(say.join('\n'));         
-            }).catch((err)=>{
-                say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
-                response.shouldEndSession(true);
-                response.say(say.join('\n'));				
-            })
-            console.log(say);
+            // }).catch((err)=>{
+            //     say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
+            //     response.shouldEndSession(true);
+            //     response.say(say.join('\n'));				
+            // })
+            // console.log(say);
         }
-        else if(rentalCarIntentCalled){
+        else if(accountBalanceIntentCalled){
             return helper.getRentalCarStatus(claimId).then((result)=>{            
                 say = result;
                 console.log('after call',say);
@@ -144,17 +159,17 @@ alexaApp.intent('claimIdIntent', function (request, response) {
                 response.say(say.join('\n'));				
             })
         }
-    }
+    /*}
     else{
         console.log('length not 11');
         say=['<s>please enter the complete claim number</s>'];
         response.shouldEndSession(false);
         response.say(say.join('\n'));
-    }
+    }*/
     
 });
 
-
+/*
 alexaApp.intent('GermanClaimStatusIntent', function (request, response) {
     var all = JSON.parse(request.session('all') || '{}');
     claimStatusIntentCalled = true;
