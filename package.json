@@ -1,20 +1,18 @@
 {
-  "name": "trafalgar",
+  "name": "ClaimAssistant",
   "version": "1.0.0",
-  "description": "Trafalgar B2C POC",
-  "main": "index.js",
+  "description": "An Alexa POC for Insurance Claim",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "keywords": [
-    "alexa",
-    "skill",
-    "fact"
-  ],
   "author": "Hari Krishnan V",
   "license": "ISC",
   "dependencies": {
-    "alexa-sdk": "^1.0.25",
-    "request": "^2.85.0"
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "request": "^2.83.0",
+    "alexa-sdk": "^1.0.0",
+    "alexa-app": "^3.1.0"
   }
 }
