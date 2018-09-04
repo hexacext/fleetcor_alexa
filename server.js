@@ -4,7 +4,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     alexa = require('alexa-app'),
     app = express(),
-    alexaApp = new alexa.app("claim"),
+    alexaApp = new alexa.app("fleetcor assistant"),
     helper = require('./helper')
 
 alexaApp.express({
