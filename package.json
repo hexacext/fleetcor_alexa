@@ -4,7 +4,7 @@
   "description": "An Alexa POC Fleetcor cards",
   "main": "server.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "author": "Hari Krishnan V",
   "license": "ISC",
