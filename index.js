@@ -30,7 +30,6 @@ app.post('/assistant',(req,res)=>{
                   "response": {
                       "outputSpeech": {
                         "type": "PlainText",
-                        "text": responseText,
                         "ssml": "<speak>"+responseText+"</speak>"
                       }
                     },
@@ -60,7 +59,7 @@ app.post('/assistant',(req,res)=>{
                             },
                             "shouldEndSession": false
                         }
-                        res.json(responseJson).end();
+                        res.json(responseJson);
         
                       break;
         
@@ -77,7 +76,7 @@ app.post('/assistant',(req,res)=>{
                           },
                           "shouldEndSession": false
                       }
-                      res.json(responseJson).end();
+                      res.json(responseJson);
                         break;
         
                     case "accountBalanceIntent":
@@ -93,7 +92,7 @@ app.post('/assistant',(req,res)=>{
                           },
                           "shouldEndSession": false
                       }
-                      res.json(responseJson).end();
+                      res.json(responseJson);
                         break;
         
                     case "ThanksIntent":
