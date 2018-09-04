@@ -274,7 +274,6 @@ alexaApp.intent('thankIntent', function (request, response) {
     var say =["<s> Happy to help you!</s>"];
     response.shouldEndSession(true);
     response.say(say.join('\n'));
-    resetAll();
 });
 
 
