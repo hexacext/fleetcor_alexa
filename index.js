@@ -38,8 +38,7 @@ app.post('/assistant',(req,res)=>{
                     "reprompt": { 
                       "outputSpeech": {
                         "type": "PlainText",   
-                        "text": responseText,                     
-                        "ssml": "<speak>"+responseText+"</speak>"
+                        "text": responseText
                       }
                     },
                     "shouldEndSession": false
