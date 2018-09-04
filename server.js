@@ -88,7 +88,7 @@ alexaApp.intent('creditLimitIntent', function (request, response) {
 
 alexaApp.intent('accountBalanceIntent', function (request, response) {
    var say=[];
-     say = ["<s>You have <break strength=\"medium\" /> $100 balance in your account</s>"];
+     say = ["<s>You have a balance of <break strength=\"medium\" /> $100  in your account</s>"];
     response.shouldEndSession(false);
     response.say(say.join('\n'));
 });
