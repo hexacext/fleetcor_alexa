@@ -31,12 +31,14 @@ app.post('/assistant',(req,res)=>{
                   "response": {
                       "outputSpeech": {
                         "type": "PlainText",
+                        "text": responseText,
                         "ssml": "<speak>"+responseText+"</speak>"
                       }
                     },
                     "reprompt": { 
                       "outputSpeech": {
-                        "type": "PlainText",                        
+                        "type": "PlainText",   
+                        "text": responseText,                     
                         "ssml": "<speak>"+responseText+"</speak>"
                       }
                     },
