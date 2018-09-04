@@ -25,7 +25,7 @@ app.post('/assistant',(req,res)=>{
                 // Launch Request
                 console.log(`LAUNCH REQUEST`)
                 
-                var responseText = "Hi welcome to fleetcor assistant"+ 
+                var responseText = "Hi, welcome to fleetcor assistant"+ 
                 "What can I do for you ";
                 var responseJson = {
                   "response": {
@@ -55,10 +55,10 @@ app.post('/assistant',(req,res)=>{
                     case "blockCardIntent":
                       console.log("blockCardIntent  called");
                       resp_msg = "";
-                        var responseText = "<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>";
-                        responseText = responseText + "<s>Anything else i can do for you?</s>";
+                        var responseText = "Sure, Your card has been blocked successfully.Contact our help center to unblock it";
+                        responseText = responseText + "Anything else i can do for you?";
                         var responseJson = {
-                            "response": {
+                            "reprompt": {
                                 "outputSpeech": {
                                   "type": "PlainText",
                                   "text": responseText,
