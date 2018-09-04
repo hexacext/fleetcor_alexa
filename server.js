@@ -4,7 +4,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     alexa = require('alexa-app'),
     app = express(),
-    alexaApp = new alexa.app("fleetcor assistant"),
+    alexaApp = new alexa.app("fleetcorassistant"),
     helper = require('./helper')
 
 alexaApp.express({
@@ -52,7 +52,6 @@ alexaApp.accountLinkingCard = function () {
     return card;
 }
 
-app.post('/assistant',(request,response)=>{
 alexaApp.launch(function (request, response) {
     console.log('launch ' + JSON.stringify(request));
     console.log('Session Obj ' + JSON.stringify(request.getSession()));
@@ -288,7 +287,6 @@ if (process.argv.length > 2) {
         console.log(alexaApp.utterances());
     }
 }
-});
 const server = app.listen(process.env.PORT || 5000, () => {
     console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
