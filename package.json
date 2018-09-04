@@ -1,7 +1,7 @@
 {
-  "name": "ClaimAssistant",
+  "name": "FleetcorAssistant",
   "version": "1.0.0",
-  "description": "An Alexa POC for Insurance Claim",
+  "description": "An Alexa POC Fleetcor cards",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

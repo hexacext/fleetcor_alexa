@@ -18,16 +18,6 @@ alexaApp.error = function (e, req, res) {
     console.log(req);
     throw e;
 };
-var claimStatusIntentCalled = false;
-var rentalCarIntentCalled = false;
-var repairPaymentIntentCalled = false;
-var claimIdPresent = false;
-var rentalStartDate = '';
-var rentalDays = '';
-var claimId = '';
-var locale = '';
-var claimPaymentDetails = {};
-
 //Simple card
 alexaApp.card = function (current) {
     console.log('createCard: current=', current);
@@ -69,39 +59,9 @@ alexaApp.launch(function (request, response) {
     console.log('Session Obj is new ' + request.getSession().isNew());
     locale = request.data.request.locale;
     var say = [];
-    if(locale == 'de-DE'){
         if (request.getSession().isNew()) {
-            claimStatusIntentCalled = false;
-            rentalCarIntentCalled = false;
-            repairPaymentIntentCalled = false;
-            claimIdPresent = false;
-            rentalStartDate = '';
-            rentalDays = '';
-            claimId = '';
-                        say.push('<s>Hallo</s>');
-                        say.push('<s>Willkommen bei Claim Assistent. <break strength="medium" /></s>');   
-                        say.push('<s>Was kann ich für Dich tun <break strength="medium" /></s>');  
-                        response.shouldEndSession(false);
-                        response.say(say.join('\n'));
-                        response.send();
-                    
-        } else {
-            console.log('----Access Token not available----');
-           // response.say('<s>Node Saga requires you to link your google account.</s>');
-        }
-    }
-    if(locale == 'en-US'){
-        if (request.getSession().isNew()) {
-            claimStatusIntentCalled = false;
-            rentalCarIntentCalled = false;
-            repairPaymentIntentCalled = false;
-            claimIdPresent = false;
-            rentalStartDate = '';
-            rentalDays = '';
-            claimId = '';
-            claimPaymentDetails = {};
                         say.push('<s>Hi</s>');
-                        say.push('<s>Welcome to Claim Assistant. <break strength="medium" /></s>');   
+                        say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
                         say.push('<s>What can I do for you <break strength="medium" /></s>');  
                         response.shouldEndSession(false);
                         response.say(say.join('\n'));
@@ -111,121 +71,29 @@ alexaApp.launch(function (request, response) {
             console.log('----Access Token not available----');
            // response.say('<s>Node Saga requires you to link your google account.</s>');
         }
-    }
-    
 });
 
-alexaApp.intent('claimStatusIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');
-    claimStatusIntentCalled = true;
-    console.log(request.data.request.intent.slots)
-    var say=[];    
-    if (request.data.request.intent.slots.claimId.value){
-        claimId=request.data.request.intent.slots.claimId.value;
-        console.log('claimId:'+claimId);
-        if(claimId.length==11){
-            claimIdPresent = true;
-            claimId = (claimId.replace(/(\d{3})(\d{2})(\d{6})/, "$1-$2-$3"));
-            return helper.getClaimStatus(claimId).then((result)=>{
-                say = result;
-                console.log('after call',say);
-                response.shouldEndSession(false);
-                response.say(say.join('\n'));
-    
-            }).catch((err)=>{
-                say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
-                response.shouldEndSession(true);
-                response.say(say.join('\n'));				
-            })
-        }
-        else{
-            say=['<s>please enter the complete claim number</s>'];
-            response.shouldEndSession(false);
-            response.say(say.join('\n'));
-        } 
-    }
-    else{
-     say = ["<s>Please provide the claim number. <break strength=\"medium\" /></s>"];
-    }
-    response.shouldEndSession(false);
-    response.say(say.join('\n'));
-});
-
-alexaApp.intent('repairPaymentIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');   
-
-    repairPaymentIntentCalled = true;
-    console.log('inside repairPaymentIntent');
-    console.log(request.data.request.intent.slots)
+alexaApp.intent('blockCardIntent', function (request, response) {
     var say=[];
-    console.log(request.data.request.intent.slots.claimId.value);
-    if (request.data.request.intent.slots.claimId.value){
-        claimId=request.data.request.intent.slots.claimId.value;
-        console.log('claimId:'+claimId);
-        if(claimId.length==11){
-            claimIdPresent = true;
-            claimId = (claimId.replace(/(\d{3})(\d{2})(\d{6})/, "$1-$2-$3"));
-            
-            return helper.getClaimPaymentDetails(claimId).then((result)=>{            
-                say = "The payment status is "+result.paymentStatus;
-                claimPaymentDetails = result;           
-            }).catch((err)=>{
-                say = err;				
-            })
-            
-            console.log(say);
-        }
-        else{
-            say=['<s>please enter the complete claim number</s>'];
-            response.shouldEndSession(false);
-            response.say(say.join('\n'));
-        } 
-    }
-    else{
-     say = ["<s>Please provide the claim number. <break strength=\"medium\" /></s>"];
-    }
+     say = ["<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
     response.shouldEndSession(false);
     response.say(say.join('\n'));
 });
 
-alexaApp.intent('rentalCarIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');
-    rentalCarIntentCalled = true;
-    console.log('inside rentalCarIntent');
-    console.log(request.data.request.intent.slots)
+alexaApp.intent('creditLimitIntent', function (request, response) {
     var say=[];
-    
-    if (request.data.request.intent.slots.claimId.value){
-        claimId=request.data.request.intent.slots.claimId.value;
-        console.log('claimId:'+claimId);
-        if(claimId.length==11){
-            claimIdPresent = true;
-            claimId = (claimId.replace(/(\d{3})(\d{2})(\d{6})/, "$1-$2-$3"));
-            return helper.getRentalCarStatus(claimId).then((result)=>{            
-                say = result;
-                console.log('after call',say);
-                response.shouldEndSession(false);
-                response.say(say.join('\n'));         
-            }).catch((err)=>{
-                say = ["<s> Something went wrong while processing your request.</s><s>Please try again</s>"];
-                response.shouldEndSession(true);
-                response.say(say.join('\n'));				
-            })
-            console.log(say);
-        }
-        else{
-            say=['<s>please enter the complete claim number</s>'];
-            response.shouldEndSession(false);
-            response.say(say.join('\n'));
-        }        
-    }
-    else{
-     say = ["<s>Please provide the claim number. <break strength=\"medium\" /></s>"];
-    }
+     say = ["<s><s>You have a credit limit of <break strength=\"medium\" /> $250 in your card </s>"];
     response.shouldEndSession(false);
     response.say(say.join('\n'));
 });
 
+alexaApp.intent('accountBalanceIntent', function (request, response) {
+   var say=[];
+     say = ["<s><s>You have <break strength=\"medium\" /> $100 balance in your account</s>"];
+    response.shouldEndSession(false);
+    response.say(say.join('\n'));
+});
+/*
 alexaApp.intent('claimIdIntent', function (request, response) {
     var all = JSON.parse(request.session('all') || '{}');
     var say =['default response'];
@@ -350,7 +218,7 @@ alexaApp.intent('GermanClaimIdIntent', function (request, response) {
         });
     }
     response.shouldEndSession(false);
-    response.say(say.join('\n'));*/
+    response.say(say.join('\n'));//*
 });
 
 alexaApp.intent('rentalConfirmIntent', function (request, response) {
@@ -400,15 +268,7 @@ alexaApp.intent('rentalDetailsIntent', function (request, response) {
    // var say =["<s> Happy to help you!</s>"];
     response.shouldEndSession(false);
     response.say(say.join('\n'));
-});
-
-alexaApp.intent('GermanWelcomeIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');
-    var say =["<s> Willkommen beim Politikassistenten.</s><s>Was kann ich für Dich tun</s>"];
-    response.shouldEndSession(true);
-    response.say(say.join('\n'));
-    resetAll();
-});
+});*/
 
 alexaApp.intent('thankIntent', function (request, response) {
     var all = JSON.parse(request.session('all') || '{}');
@@ -428,54 +288,6 @@ if (process.argv.length > 2) {
         console.log(alexaApp.utterances());
     }
 }
-
-function getRepairPaymentDetailsMessage(callback){
-    say.push('<s>The amount of $'+result.totalPayments.amount+' is credited to your bank account number <break strength=\"medium\" /> <say-as interpret-as="spell-out">'+result.bankAccountNumber+'</say-as> </s>');
-    say.push('<s>on '+result.paymentDate+'.</s>');
-    callback (say);
-}
-
-/*function getRentalCarStatus(claimId,callback){
-    var say = ["<s> The Rental car has not been booked yet as the option was not selected when the claim was created.</s>"];
-    say.push('<s> <break strength=\"medium\" /> Do you want to book one? </s>');
-    callback (say);
-}
-
-function getRentalConfirmation(startDate,callback){
-    console.log('In function'+startDate);
-    var say = ["<s> Give me a moment and I shall revert with booking details.<break time='2s'/>  </s>"];
-    say.push('<s> The car has been booked with the Rental agency <break strength=\"medium\" /> “Enterprise” and the reservation number is <say-as interpret-as=\"spell-out\">AB0963829</say-as>. </s>');
-    say.push('<s> The car will be delivered on<break strength=\"medium\" />');
-    say.push('April 5, 9AM.</s>');    
-    callback (say);
-}*/
-
-function resetAll(){
-    claimStatusIntentCalled = false;
-    rentalCarIntentCalled = false;
-    repairPaymentIntentCalled = false;
-    claimIdPresent = false;
-    rentalStartDate = '';
-    rentalDays = '';
-    claimId = '';
-    locale = '';
-    claimPaymentDetails = {};
-}
-
-alexaApp.intent('repairPaymentDetailsIntent', function (request, response) {
-    var all = JSON.parse(request.session('all') || '{}');
-    var say = [];
-    console.log(claimPaymentDetails);
-    console.log(repairPaymentIntentCalled);
-    if(claimIdPresent && (Object.keys(claimPaymentDetails).length !== 0) && repairPaymentIntentCalled && 
-        (claimPaymentDetails.paymentStatus === "Issued" || claimPaymentDetails.paymentStatus === "Cleared")) {
-        say = getRepairPaymentDetailsMessage();
-    } else {
-        var say = ["<s>Since the payment status is "+claimPaymentDetails.paymentStatus+", we are unavailable to provide the details. Please try something else.</s>"];
-    }
-    response.shouldEndSession(false);
-    response.say(say.join('\n'));
-});
 
 const server = app.listen(process.env.PORT || 5000, () => {
     console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
