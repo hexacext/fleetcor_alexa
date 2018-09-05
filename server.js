@@ -121,7 +121,7 @@ alexaApp.intent('cardNumberIntent', function (request, response) {
         if(blockCardIntentCalled){
             console.log('Inside blockCardIntentCalled');
             //return helper.getClaimStatus(claimId).then((result)=>{
-                say = ["<s> Are you sure that you want to block the card ending with <say-as interpret-as='cardinal'>"+cardNumber+" </say-as></s>"];
+                say = ["<s> Are you sure that you want to block the card ending with <say-as interpret-as='ordinal'>"+cardNumber+" </say-as></s>"];
                 console.log('after call',say);
                 response.shouldEndSession(false);
                 response.say(say.join('\n'));
