@@ -57,7 +57,7 @@ alexaApp.accountLinkingCard = function () {
     return card;
 }
 
-alexaApp.launch(async function (request, response) {
+alexaApp.launch(function (request, response) {
     console.log('launch ' + JSON.stringify(request));
     console.log('Session Obj ' + JSON.stringify(request.getSession()));
     console.log('Session Obj is new ' + request.getSession().isNew());
@@ -65,7 +65,7 @@ alexaApp.launch(async function (request, response) {
     var say = [];
 	if (request.getSession().details.accessToken) {
 		console.log("Inside if");
-		await getUserDetails(request.getSession().details.accessToken).then((userName) => {
+		getUserDetails(request.getSession().details.accessToken).then((userName) => {
 			console.log("User Name ", userName);
 			say.push('<s>Hi ' + userName + ' </s>');
 			say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
