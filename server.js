@@ -61,7 +61,7 @@ alexaApp.launch(function (request, response) {
     console.log('launch ' + JSON.stringify(request));
     console.log('Session Obj ' + JSON.stringify(request.getSession()));
     console.log('Session Obj is new ' + request.getSession().isNew());
-    locale = request.data.request.locale;
+    //locale = request.data.request.locale;
     var say = [];
 	if (request.getSession().details.accessToken) {
 		console.log("Inside if");
