@@ -5,7 +5,7 @@ const express = require('express'),
     alexa = require('alexa-app'),
     app = express(),
     alexaApp = new alexa.app("fleetcorassistant"),
-    helper = require('./helper')
+    helper = require('./helper');
 
 alexaApp.express({
     expressApp: app,
@@ -57,24 +57,38 @@ alexaApp.accountLinkingCard = function () {
     return card;
 }
 
-alexaApp.launch(function (request, response) {
+alexaApp.launch(async function (request, response) {
     console.log('launch ' + JSON.stringify(request));
     console.log('Session Obj ' + JSON.stringify(request.getSession()));
     console.log('Session Obj is new ' + request.getSession().isNew());
-    //locale = request.data.request.locale;
+    locale = request.data.request.locale;
     var say = [];
-        if (request.getSession().isNew()) {
-                        say.push('<s>Hi</s>');
-                        say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
-                        say.push('<s>What can I do for you <break strength="medium" /></s>');  
-                        response.shouldEndSession(false);
-                        response.say(say.join('\n'));
-                        response.send();
-                    
-        } else {
-            console.log('----Access Token not available----');
-           // response.say('<s>Node Saga requires you to link your google account.</s>');
-        }
+	if (request.getSession().details.accessToken) {
+		console.log("Inside if");
+		await getUserDetails(request.getSession().details.accessToken).then((userName) => {
+			console.log("User Name ", userName);
+			say.push('<s>Hi ' + userName + ' </s>');
+			say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
+			say.push('<s>What can I do for you <break strength="medium" /></s>'); 
+			response.shouldEndSession(false);			
+			response.say(say.join('\n'));
+			console.log("Say ", say);
+			response.send();
+		}).catch((error) => {
+			console.log("Error in acc link ", error);
+			response.say('<s>There was a problem with account linking.<break strength="medium" /> Try again later</s>');
+			response.shouldEndSession(true);
+			response.send();
+		});
+		console.log("After UD");
+	} else {
+		console.log("Inside else");
+		console.log('----Access Token not available----');
+		response.card(alexaApp.accountLinkingCard());
+		response.say('<s>FleetCor Assistant requires you to link your Amazon account</s>');
+		response.shouldEndSession(true);
+	}
+	console.log("Last");
 });
 
 alexaApp.intent('blockCardIntent', function (request, response) {
@@ -304,3 +318,22 @@ if (process.argv.length > 2) {
 const server = app.listen(process.env.PORT || 5000, () => {
     console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
+
+//To get the profile details of user using the Access Token
+function getUserDetails(accessToken){
+	const request = require('request');	
+	var amazonProfileURL = require('./config').amazonProfileURL + accessToken;
+	return new Promise((resolve, reject) => {
+		request(amazonProfileURL, function(error, response, body) {
+			if (response.statusCode == 200) {
+				var profile = JSON.parse(body);
+				//For name - profile.name
+				//For email - profile.email
+				return resolve(profile.name);
+			} else {
+				console.log("Error in getting user details ", error);
+				return reject('error');
+			}
+		});
+	});
+}
