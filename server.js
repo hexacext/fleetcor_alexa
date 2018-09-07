@@ -57,22 +57,22 @@ alexaApp.accountLinkingCard = function () {
     return card;
 }
 
-alexaApp.launch(function (request, response) {
+alexaApp.launch(async function (request, response) {
     console.log('launch ' + JSON.stringify(request));
     console.log('Session Obj ' + JSON.stringify(request.getSession()));
     console.log('Session Obj is new ' + request.getSession().isNew());
     //locale = request.data.request.locale;
     var say = [];
+	//Check if the Access Token is there
 	if (request.getSession().details.accessToken) {
-		console.log("Inside if");
-		getUserDetails(request.getSession().details.accessToken).then((userName) => {
-			console.log("User Name ", userName);
-			say.push('<s>Hi ' + userName + ' </s>');
+		//Get user profile details like name & email
+		await getUserDetails(request.getSession().details.accessToken).then((userDetails) => {
+			//For email - userDetails.email
+			say.push('<s>Hi ' + userDetails.name + ' </s>');
 			say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
 			say.push('<s>What can I do for you <break strength="medium" /></s>'); 
 			response.shouldEndSession(false);			
 			response.say(say.join('\n'));
-			console.log("Say ", say);
 			response.send();
 		}).catch((error) => {
 			console.log("Error in acc link ", error);
@@ -80,15 +80,11 @@ alexaApp.launch(function (request, response) {
 			response.shouldEndSession(true);
 			response.send();
 		});
-		console.log("After UD");
 	} else {
-		console.log("Inside else");
-		console.log('----Access Token not available----');
 		response.card(alexaApp.accountLinkingCard());
 		response.say('<s>FleetCor Assistant requires you to link your Amazon account</s>');
 		response.shouldEndSession(true);
 	}
-	console.log("Last");
 });
 
 alexaApp.intent('blockCardIntent', function (request, response) {
@@ -327,12 +323,9 @@ function getUserDetails(accessToken){
 		request(amazonProfileURL, function(error, response, body) {
 			if (response.statusCode == 200) {
 				var profile = JSON.parse(body);
-				//For name - profile.name
-				//For email - profile.email
-				return resolve(profile.name);
+				resolve(profile);
 			} else {
-				console.log("Error in getting user details ", error);
-				return reject('error');
+				reject(error);
 			}
 		});
 	});
