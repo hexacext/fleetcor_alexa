@@ -5,7 +5,19 @@ const express = require('express'),
     alexa = require('alexa-app'),
     app = express(),
     alexaApp = new alexa.app("fleetcorassistant"),
-    helper = require('./helper');
+    helper = require('./helper'),
+	mongoose = require('mongoose');
+	
+require('dotenv').config();
+	
+/*mongoose.connect(process.env.MONGODB_URL + process.env.MONGODB_NAME);
+var db = mongoose.connection;
+db.on("error",console.error.bind(console,"Connection error"));
+db.once("open",function(callback){
+  console.log('Connection Succeeded');
+});*/
+
+
 
 alexaApp.express({
     expressApp: app,
@@ -23,31 +35,6 @@ alexaApp.error = function (e, req, res) {
     console.log(req);
     throw e;
 };
-//Simple card
-alexaApp.card = function (current) {
-    console.log('createCard: current=', current);
-    var card = {
-        type: 'Simple',
-        title: 'Card'
-    };
-    
-    card.content = content;
-    return card;
-};
-
-//Standard card
-alexaApp.standardCard = function () {
-    var card = {
-        type: 'Standard',
-        title: 'Card',
-        text: 'Sample Text \n Line2',
-        image: {
-            smallImageUrl: 'https://cdn3.iconfinder.com/data/icons/phones-set-2/512/27-512.png',
-            largeImageUrl: 'https://cdn3.iconfinder.com/data/icons/phones-set-2/512/27-512.png'
-        }
-    };
-    return card;
-};
 
 //Account linking card
 alexaApp.accountLinkingCard = function () {
@@ -58,9 +45,9 @@ alexaApp.accountLinkingCard = function () {
 }
 
 alexaApp.launch(async function (request, response) {
-    console.log('launch ' + JSON.stringify(request));
-    console.log('Session Obj ' + JSON.stringify(request.getSession()));
-    console.log('Session Obj is new ' + request.getSession().isNew());
+    //console.log('launch ' + JSON.stringify(request));
+    //console.log('Session Obj ' + JSON.stringify(request.getSession()));
+    //console.log('Session Obj is new ' + request.getSession().isNew());
     //locale = request.data.request.locale;
     var say = [];
 	//Check if the Access Token is there
@@ -71,7 +58,7 @@ alexaApp.launch(async function (request, response) {
 			say.push('<s>Hi ' + userDetails.name + ' </s>');
 			say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
 			say.push('<s>What can I do for you <break strength="medium" /></s>'); 
-			response.shouldEndSession(false);			
+			response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");			
 			response.say(say.join('\n'));
 			response.send();
 		}).catch((error) => {
@@ -90,35 +77,44 @@ alexaApp.launch(async function (request, response) {
 alexaApp.intent('blockCardIntent', function (request, response) {
     blockCardIntentCalled = true;
     var say=[];
-    say = ["<s>Sure,<break strength=\"medium\" /> please provide the last 4 digits of the card you wish to block</s>"];    
-    //say = ["<s>Sure,<break strength=\"medium\" /> Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
-    response.shouldEndSession(false);
+    say = ["<s>Sure,<break strength=\"medium\" /> please provide the last 4 digits of the card you wish to block</s>"];
+    response.shouldEndSession(false, "Tell me the last 4 digits of your card to be blocked");
     response.say(say.join('\n'));
 });
 
 alexaApp.intent('creditLimitIntent', function (request, response) {
     //creditLimitIntentCalled = true;
     var say=[];
-     say = ["<s>You have a credit limit of <break strength=\"medium\" /> $250 in your card </s>"];
-    response.shouldEndSession(false);
+     say = ["<s>You have a credit limit of <break strength=\"medium\" /> $250 in your card. <break strength=\"medium\" /> Is there anything I can help you with? </s>"];
+    response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");
     response.say(say.join('\n'));
 });
 
 alexaApp.intent('accountBalanceIntent', function (request, response) {
    // accountBalanceIntentCalled = true;
        var say=[];
-     say = ["<s>You have a balance of <break strength=\"medium\" /> $100  in your account</s>"];
-    response.shouldEndSession(false);
+     say = ["<s>You have a balance of <break strength=\"medium\" /> $100  in your account. <break strength=\"medium\" /> Is there anything I can help you with?</s>"];
+    response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");
     response.say(say.join('\n'));
 });
 
-alexaApp.intent('confirmBlockIntent', function (request, response) {
+alexaApp.intent('yesIntent', function (request, response) {
     // accountBalanceIntentCalled = true;
         var say=[];
-        say = ["<s>Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it</s>"];    
-     response.shouldEndSession(false);
+        say = ["<s>Your card has been blocked successfully.<break strength=\"medium\" />Contact our help center to unblock it.<break strength=\"medium\" /> Is there anything I can help you with?</s>"];    
+     response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");
      response.say(say.join('\n'));
  });
+
+ alexaApp.intent('noIntent', function (request, response) {
+	var say = [];
+    if(blockCardIntentCalled){
+		say.push("<s>OK, Your card is not blocked<break strength=\"medium\" />Is there anything I can help you with?</s>");
+	}
+	response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");
+    response.say(say.join('\n'));
+ });
+ 
 alexaApp.intent('cardNumberIntent', function (request, response) {
     
     var say =['default response'];
@@ -133,7 +129,7 @@ alexaApp.intent('cardNumberIntent', function (request, response) {
             //return helper.getClaimStatus(claimId).then((result)=>{
                 say = ["<s> Are you sure that you want to block the card ending with <say-as interpret-as='ordinal'>"+cardNumber+" </say-as></s>"];
                 console.log('after call',say);
-                response.shouldEndSession(false);
+                response.shouldEndSession(false, "Tell yes to block or no to not block the card");
                 response.say(say.join('\n'));
 
             // }).catch((err)=>{
@@ -158,7 +154,7 @@ alexaApp.intent('cardNumberIntent', function (request, response) {
             // console.log(say);
         }
         else if(accountBalanceIntentCalled){
-            return helper.getRentalCarStatus(claimId).then((result)=>{            
+            return helper.getRentalCarStatus(claimId).then((result) => {            
                 say = result;
                 console.log('after call',say);
                 response.shouldEndSession(false);
@@ -296,7 +292,7 @@ alexaApp.intent('rentalDetailsIntent', function (request, response) {
 
 alexaApp.intent('thankIntent', function (request, response) {
     var all = JSON.parse(request.session('all') || '{}');
-    var say =["<s> Happy to help you!</s>"];
+    var say =["<s> Happy to help you!</s> Good bye"];
     response.shouldEndSession(true);
     response.say(say.join('\n'));
 });
