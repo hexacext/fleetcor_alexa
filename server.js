@@ -6,18 +6,25 @@ const express = require('express'),
     app = express(),
     alexaApp = new alexa.app("fleetcorassistant"),
     helper = require('./helper'),
-	mongoose = require('mongoose');
+	MongoClient = require('mongodb').MongoClient;
 	
 require('dotenv').config();
 	
 /*mongoose.connect(process.env.MONGODB_URL + process.env.MONGODB_NAME);
 var db = mongoose.connection;
+console.log(db.collections);
 db.on("error",console.error.bind(console,"Connection error"));
 db.once("open",function(callback){
   console.log('Connection Succeeded');
 });*/
 
-
+/*MongoClient.connect(process.env.MONGODB_URL, function(err, db) {
+  if (err) { 
+	console.log("Error in getting connection ", err);
+  } else {
+	  console.log("Connection Succeeded");
+  }
+});*/
 
 alexaApp.express({
     expressApp: app,
@@ -56,7 +63,7 @@ alexaApp.launch(async function (request, response) {
 		await getUserDetails(request.getSession().details.accessToken).then((userDetails) => {
 			//For email - userDetails.email
 			say.push('<s>Hi ' + userDetails.name + ' </s>');
-			say.push('<s>Welcome to FleetCor Assistant. <break strength="medium" /></s>');   
+			say.push('<s>I am Fleetcor Assistant.<break strength="medium" />I can help you with managing your Fleetcards.<break strength="medium" />You may ask ‘What is my credit limit?’ or <break strength="medium" /> ‘What is my available balance?’.<break strength="medium" />You can stop the conversation anytime by saying end or stop</s>');   
 			say.push('<s>What can I do for you <break strength="medium" /></s>'); 
 			response.shouldEndSession(false, "I can help you with credit limit, account balance or block your card");			
 			response.say(say.join('\n'));
