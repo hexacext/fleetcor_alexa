@@ -23,6 +23,7 @@ var isblockCard = false;
 var isExistingCard = false;
 var isCreditLimit = false;
 var isAccountBalance = false;
+var isRecentTransactions = false;
 var lastFour = "";
 var userId = '1';
 
@@ -147,6 +148,31 @@ alexaApp.intent('accountBalanceIntent',async function (request, response) {
 	}
 });
 
+//To handle the recent transaction queries
+alexaApp.intent('transactionsIntent', async function(request, response){
+	console.log("Inside Trans Intent ");
+	isRecentTransactions = true;
+	let say = [];
+	if(request.data.request.intent.slots.transactionNumber.value){
+		lastFour = request.data.request.intent.slots.transactionNumber.value;
+		await handleQuery(say, response);
+	} else {
+		if(lastFour.trim() != ""){
+			isExistingCard = true;
+			say = [`Sure,<break strength=\"medium\" /> Do you want to check the transactions for card ending with <say-as interpret-as='digits'> ${lastFour} </say-as>`];
+			response.shouldEndSession(false, `Tell me Yes <break strength=\"medium\" /> to check the transactions <say-as interpret-as='digits'> ${lastFour} </say-as>
+			<break strength=\"medium\" />or No <break strength=\"medium\" /> to check for other card`);
+			response.say(say.join('\n'));
+		} else {
+			isExistingCard = false;
+			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
+			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the transactions");
+			response.say(say.join('\n'));
+			
+		}
+	}
+});
+
 //To handle the user input - Yes
 alexaApp.intent('yesIntent',async function (request, response) {
 	console.log("Inside yes Intent");
@@ -254,6 +280,11 @@ alexaApp.intent('unblockCardIntent', function (request, response) {
 });
 
 alexaApp.intent('AMAZON.StopIntent', function (request, response) {
+	var isblockCard = false;
+	var isExistingCard = false;
+	var isCreditLimit = false;
+	var isAccountBalance = false;
+	var isRecentTransactions = false;
 	console.log("Inside stop Intent");
     let say = ["Happy to help you! Good bye"];
     response.shouldEndSession(true);
@@ -268,6 +299,11 @@ alexaApp.intent('AMAZON.HelpIntent', function (request, response) {
 });
 
 alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
+	var isblockCard = false;
+	var isExistingCard = false;
+	var isCreditLimit = false;
+	var isAccountBalance = false;
+	var isRecentTransactions = false;
 	console.log("Inside cancel Intent");
     let say = ["Happy to help you! Good bye"];
     response.shouldEndSession(true);
@@ -276,6 +312,11 @@ alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
 
 //To handle if user wants to end the conversation
 alexaApp.intent('thankIntent', function (request, response) {
+	var isblockCard = false;
+	var isExistingCard = false;
+	var isCreditLimit = false;
+	var isAccountBalance = false;
+	var isRecentTransactions = false;
 	console.log("Inside thank Intent");
     var say =["<s> Happy to help you!</s><break strength=\"medium\" /> Good bye"];
     response.shouldEndSession(true);
@@ -389,6 +430,43 @@ async function handleQuery(say, response){
 			}
 		}).catch((error) => {
 			say = [`Sorry, <break strength=\"medium\" /> I am not able to answer this at the moment.<break strength=\"medium\" /> Please try again later`];
+			response.shouldEndSession(true);
+			response.say(say.join('\n'));
+		});
+	} else if(isRecentTransactions){
+		await db.checkIfCardExists(userId, lastFour).then(async (isAvailable) => {
+			if(isAvailable){
+				await db.getTransactions(userId, lastFour).then((transactionDetails) => {	
+					const moment = require('moment');
+					say = [`You have the following transactions for the card ending with <say-as interpret-as='digits'> ${lastFour} </say-as>`];
+					for(var i=0;i<transactionDetails.length;i++){
+						//console.log(moment(transactionDetails[i].transactionDate).format('Do MMMM YYYY, dddd'),moment(transactionDetails[i].transactionDate).format('h mm A'),transactionDetails[i].transactionAmount,transactionDetails[i].station);
+						say.push(`<break strength=\"medium\" /> On ${moment(transactionDetails[i].transactionDate).format('Do MMMM YYYY, dddd')} 
+						${moment(transactionDetails[i].transactionDate).format('h mm A')} <break strength=\"medium\" />
+						you have spent $ ${transactionDetails[i].transactionAmount} <break strength=\"medium\" /> at ${transactionDetails[i].station}`);
+					}
+					say.push(`<break strength=\"medium\" />Is there anything I can help you with?`);
+					response.shouldEndSession(false, "I can help you with credit limit,<break strength=\"medium\" /> account balance <break strength=\"medium\" /> or block your card");
+					response.say(say.join('\n'));
+				})
+				.catch((error) => {
+					say = [`Sorry,<break strength=\"medium\" /> I am not able to answer this at the moment. Please try again later`];
+					response.shouldEndSession(true);
+					response.say(say.join('\n'));
+				});
+				//After completing the operation reset the flag
+				isRecentTransactions = false;
+			} else {
+				//After completing the operation reset the flag
+				isRecentTransactions = false;
+				say = [`Please check <break strength=\"medium\" /> There is no card ending with <say-as interpret-as='digits'> ${lastFour} </say-as>
+				<break strength=\"medium\" />Is there anything I can help you with?`];
+				lastFour = "";
+				response.shouldEndSession(false, "I can help you with credit limit,<break strength=\"medium\" /> account balance <break strength=\"medium\" /> or block your card");
+				response.say(say.join('\n'));
+			}
+		}).catch((error) => {
+			say = [`Sorry,<break strength=\"medium\" /> I am not able to answer this at the moment. Please try again later`];
 			response.shouldEndSession(true);
 			response.say(say.join('\n'));
 		});

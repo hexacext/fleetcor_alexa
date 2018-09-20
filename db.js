@@ -103,6 +103,29 @@ var mongodb = {
 				}
 			});
 		});
+	},
+	getTransactions: function(userId, lastFour){
+		return new Promise(function(resolve, reject){
+			MongoClient.connect(process.env.MONGODB_URL + process.env.MONGODB_NAME, function(err, db) {
+				console.log("Inside db");
+				if (err) { 
+					console.log("Error in getting connection ", err);
+					return reject(err);
+				} else {	  
+					//Fetch only the recent 6 transactions
+					db.collection("fleetcor_user_transaction").find({$and: [{"userId": userId, "lastFour": lastFour}]}).sort({"transactionDate": -1}).limit(6).toArray((error, result) => {
+						if(error){
+							console.log(error);
+							return reject(error);
+						} else {
+							//console.log(result);
+							return resolve(result);
+						}
+						db.close();
+					});
+				}
+			});
+		});
 	}
 };
 
