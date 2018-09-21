@@ -222,7 +222,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
 		await db.getTransactions(userId, lastFour).then((transactionDetails) => {
 			console.log("TransactionDetails ", transactionDetails.length);
 			if(transactionDetails.length == 0){
-				say = [`You don't have transactions in your card <break strength=\"medium\" /> You can use your fleetcard in any of the `];
+				say = [`You don't have transactions in your card <break strength=\"medium\" /> You can use your fleetcard in any of the specified Merchant Location`];
 				response.shouldEndSession(false, "I can help you with credit limit,<break strength=\"medium\" /> account balance <break strength=\"medium\" /> or block your card");
 				response.say(say.join('\n'));
 			} else {
