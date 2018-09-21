@@ -262,8 +262,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
 		if(isExistingCard){
 			isExistingCard = false;
 			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to block"];
-			response.shouldEndSession(false, "Tell me the last 4 digits of your card to be blocked");
-			response.say(say.join('\n'));			
+			response.shouldEndSession(false, "Tell me the last 4 digits of your card to be blocked");			
 		} else {
 			//After completing the operation reset the flag
 			isblockCard = false;
@@ -275,7 +274,6 @@ alexaApp.intent('yesIntent',async function (request, response) {
 			isExistingCard = false;
 			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the balance");
-			response.say(say.join('\n'));	
 		} else {
 			//After completing the operation reset the flag
 			isAccountBalance = false;
@@ -287,7 +285,6 @@ alexaApp.intent('yesIntent',async function (request, response) {
 			isExistingCard = false;
 			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the credit limit");
-			response.say(say.join('\n'));	
 		} else {
 			//After completing the operation reset the flag
 			isCreditLimit = false;
@@ -299,7 +296,6 @@ alexaApp.intent('yesIntent',async function (request, response) {
 			isExistingCard = false;
 			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the credit limit");
-			response.say(say.join('\n'));	
 		} else {
 			//After completing the operation reset the flag
 			isRecentTransactions = false;
