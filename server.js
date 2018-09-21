@@ -110,7 +110,7 @@ alexaApp.intent('creditLimitIntent', async function (request, response) {
 	} else {
 		if(lastFour.trim() != ""){
 			isExistingCard = true;
-			say = [`Sure,<break strength=\"medium\" /> Do you want to check the balance for card ending with <say-as interpret-as='digits'> ${lastFour} </say-as>`];
+			say = [`Sure,<break strength=\"medium\" /> Do you want to check the credit limit for card ending with <say-as interpret-as='digits'> ${lastFour} </say-as>`];
 			response.shouldEndSession(false, `Tell me Yes <break strength=\"medium\" /> to block the card <say-as interpret-as='digits'> ${lastFour} </say-as>
 			<break strength=\"medium\" />or No <break strength=\"medium\" /> to check for other card`);
 			response.say(say.join('\n'));
