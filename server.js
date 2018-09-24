@@ -385,6 +385,7 @@ function getUserDetails(accessToken){
 		request(amazonProfileURL, function(error, response, body) {
 			if (response.statusCode == 200) {
 				var profile = JSON.parse(body);
+				console.log(profile);
 				resolve(profile);
 			} else {
 				reject(error);
