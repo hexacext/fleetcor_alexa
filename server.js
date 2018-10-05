@@ -5,7 +5,8 @@ const express = require('express'),
     alexa = require('alexa-app'),
     app = express(),
     alexaApp = new alexa.app("fleetcorassistant"),
-	db = require('./db');
+	db = require('./db'),
+	config = require('./config');
 
 //create server to listen to port from the environment variable or 5000
 const server = app.listen(process.env.PORT || 5000, () => {
@@ -55,7 +56,7 @@ alexaApp.launch(async function (request, response) {
 			I am Fleetcor Assistant.<break strength="medium" />I can help you with managing your Fleetcards.
 			<break strength="medium" />You may ask ‘What is my credit limit?’ or <break strength="medium" /> ‘What is my available balance?’.
 			<break strength="medium" />You can stop the conversation anytime by saying end <break strength="medium" /> or stop
-			<break strength="medium" />What can I do for you today`);   
+			<break strength="medium" />What can I do for you today`); 
 			response.shouldEndSession(false, "I can help you with credit limit,<break strength=\"medium\" /> account balance <break strength=\"medium\" /> or block your card");			
 			response.say(say.join('\n'));
 			response.send();
@@ -327,11 +328,11 @@ alexaApp.intent('unblockCardIntent', function (request, response) {
 });
 
 alexaApp.intent('AMAZON.StopIntent', function (request, response) {
-	var isblockCard = false;
-	var isExistingCard = false;
-	var isCreditLimit = false;
-	var isAccountBalance = false;
-	var isRecentTransactions = false;
+	isblockCard = false;
+	isExistingCard = false;
+	isCreditLimit = false;
+	isAccountBalance = false;
+	isRecentTransactions = false;
 	console.log("Inside stop Intent");
     let say = ["Happy to help you! Good bye"];
     response.shouldEndSession(true);
@@ -346,11 +347,11 @@ alexaApp.intent('AMAZON.HelpIntent', function (request, response) {
 });
 
 alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
-	var isblockCard = false;
-	var isExistingCard = false;
-	var isCreditLimit = false;
-	var isAccountBalance = false;
-	var isRecentTransactions = false;
+	isblockCard = false;
+	isExistingCard = false;
+	isCreditLimit = false;
+	isAccountBalance = false;
+	isRecentTransactions = false;
 	console.log("Inside cancel Intent");
     let say = ["Happy to help you! Good bye"];
     response.shouldEndSession(true);
@@ -359,11 +360,11 @@ alexaApp.intent('AMAZON.CancelIntent', function (request, response) {
 
 //To handle if user wants to end the conversation
 alexaApp.intent('thankIntent', function (request, response) {
-	var isblockCard = false;
-	var isExistingCard = false;
-	var isCreditLimit = false;
-	var isAccountBalance = false;
-	var isRecentTransactions = false;
+	isblockCard = false;
+	isExistingCard = false;
+	isCreditLimit = false;
+	isAccountBalance = false;
+	isRecentTransactions = false;
 	console.log("Inside thank Intent");
     var say =["<s> Happy to help you!</s><break strength=\"medium\" /> Good bye"];
     response.shouldEndSession(true);
