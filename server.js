@@ -264,7 +264,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
     if(isblockCard){
 		if(isExistingCard){
 			isExistingCard = false;
-			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to block"];
+			say = ["OK,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to block"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to be blocked");			
 		} else {
 			//After completing the operation reset the flag
@@ -275,7 +275,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
 	} else if(isAccountBalance){
 		if(isExistingCard){
 			isExistingCard = false;
-			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
+			say = ["OK,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the balance");
 		} else {
 			//After completing the operation reset the flag
@@ -286,7 +286,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
 	} else if(isCreditLimit){
 		if(isExistingCard){
 			isExistingCard = false;
-			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
+			say = ["OK,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the credit limit");
 		} else {
 			//After completing the operation reset the flag
@@ -297,7 +297,7 @@ alexaApp.intent('yesIntent',async function (request, response) {
 	} else if(isRecentTransactions){
 		if(isExistingCard){
 			isExistingCard = false;
-			say = ["Sure,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
+			say = ["OK,<break strength=\"medium\" /> Please provide the last 4 digits of the card you wish to know"];
 			response.shouldEndSession(false, "Tell me the last 4 digits of your card to check the credit limit");
 		} else {
 			//After completing the operation reset the flag
