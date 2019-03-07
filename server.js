@@ -129,7 +129,8 @@ alexaApp.intent('accountBalanceIntent',async function (request, response) {
 	console.log("Inside AB Intent ", lastFour);
 	isAccountBalance = true;
 	let say = [];
-	if(request.data.request.intent.slots.balanceNumber.value){
+	console.log("BalanceNumber", request.data.request.intent.slots.balanceNumber.value);
+	if(request.data.request.intent.slots.balanceNumber.value){		
 		lastFour = request.data.request.intent.slots.balanceNumber.value;
 		await handleQuery(say, response);
 	} else {
